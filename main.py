@@ -4,11 +4,13 @@ from enemy import Enemy
 from door import Door
 import pygame
 import levelload
+import statelevelload
 
 pygame.init()
 
 
-
+saved_rooms = {}
+current_room = "room1"
 player = levelload.create_player()
 walls, enemies, interactables = levelload.load_room("room1")
 
@@ -33,10 +35,23 @@ while running:
                         if res is not None:
                             print(res)
                             new_room, x_spawn, y_spawn = res
-                            walls, enemies, interactables = levelload.load_room(new_room)
+                            statelevelload.save_room_level(
+                                current_room,
+                                saved_rooms,
+                                enemies,
+                                interactables
+                            )
+                            current_room = new_room
+                            if new_room not in saved_rooms:
+                                walls, enemies, interactables = levelload.load_room(new_room)
+                            else:
+                                enemies, interactables = statelevelload.load_saved_room(
+                                    new_room,
+                                    saved_rooms
+                                )
+                                walls = levelload.load_walls(new_room)
                             player.x_position = x_spawn
                             player.y_position = y_spawn
-                            break
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w] or keys[pygame.K_UP]:

@@ -63,3 +63,9 @@ def interactable_list(room_data):
     create_doors(room_data, interactables)
     # need moree interactables
     return interactables
+
+def load_walls(room):
+    with open(f"data/rooms/{room}.json", "r") as file:
+        room_data = json.load(file)
+
+    return create_walls(room_data)
