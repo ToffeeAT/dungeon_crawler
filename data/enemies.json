@@ -1,0 +1,11 @@
+{
+    "basic_enemy": {
+        "health": 7,
+        "max_health": 7,
+        "speed": 0.5,
+        "attack": 3,
+        "detection_range": 200,
+        "attack_range": 50,
+        "attack_cooldown": 1000
+    }
+}
