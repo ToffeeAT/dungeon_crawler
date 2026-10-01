@@ -1,7 +1,7 @@
-from player import Player
-from enemy import Enemy
-from wall import Wall
-from door import Door
+from classes.player import Player
+from classes.enemy import Enemy
+from classes.wall import Wall
+from classes.door import Door
 import json
 
 

@@ -1,5 +1,5 @@
-from room import Room
-from enemy import Enemy
+from classes.room import Room
+from classes.enemy import Enemy
 
 def save_room_level(room, saved_rooms: dict[str, Room], enemies: list[Enemy], interactables):
     saved_rooms[room] = Room(room, enemies, interactables)

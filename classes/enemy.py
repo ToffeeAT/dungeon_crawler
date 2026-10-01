@@ -2,9 +2,9 @@ import math
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from player import Player
+    from classes.player import Player
 
-from wall import Wall
+from classes.wall import Wall
 
 class Enemy:
     def __init__(self, x_pos, y_pos, health, max_health, speed, attack, detection_range, attack_range, attack_cooldown, last_attack_time):

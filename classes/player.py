@@ -1,10 +1,10 @@
-from wall import Wall
+from classes.wall import Wall
 import math
-from door import Door
+from classes.door import Door
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from enemy import Enemy
+    from classes.enemy import Enemy
 
 
 class Player:
@@ -114,5 +114,8 @@ class Player:
         if self.interactable_in_range(interactable):
             if isinstance(interactable, Door):
                 return interactable.connected_room, interactable.x_spawn, interactable.y_spawn
+
+    def is_player_alive(self):
+        return self.health > 0
        
     

@@ -1,4 +1,4 @@
-from enemy import Enemy
+from classes.enemy import Enemy
 
 class Room:
     def __init__(self,room_name, enemies: list[Enemy], interactables):
