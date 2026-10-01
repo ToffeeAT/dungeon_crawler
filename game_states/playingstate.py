@@ -1,5 +1,6 @@
 from classes.player import Player
 from classes.door import Door
+from classes.chest import Chest
 import pygame
 import levelload
 import statelevelload
@@ -12,7 +13,7 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                     player.attack_enemy(enemy)
             elif event.key == pygame.K_e:
                 for interactable in interactables:
-                    if isinstance(interactable, Door):
+                    if isinstance(interactable, Door): #Door logic
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
                             new_room, x_spawn, y_spawn = res
@@ -32,7 +33,18 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 )
                                 walls = levelload.load_walls(new_room)
                             player.x_position = x_spawn
-                            player.y_position = y_spawn
+                            player.y_position = y_spawn #Door Logic
+                    elif isinstance(interactable, Chest):
+                        res = player.interact_with_interactable(interactable)
+                        if res is not None:
+                            items, requires_key = res
+                            if not requires_key:
+                                interactable.open_chest()
+                                print(items)
+
+
+
+
 
     return current_room, walls, enemies, interactables
 
@@ -59,6 +71,9 @@ def draw(screen, player, walls, enemies, interactables):
     for interactable in interactables:
         if isinstance(interactable, Door):
             pygame.draw.rect(screen, (255,255,0), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
+        elif isinstance(interactable, Chest):
+            pygame.draw.rect(screen, (139, 69, 19), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
+
 
     if player.is_player_alive():
         pygame.draw.rect(screen, (255,0,0), (player.x_position, player.y_position, 50,50))

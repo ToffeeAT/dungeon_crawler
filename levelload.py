@@ -2,6 +2,8 @@ from classes.player import Player
 from classes.enemy import Enemy
 from classes.wall import Wall
 from classes.door import Door
+from classes.chest import Chest
+from classes.item import Item
 import json
 
 
@@ -15,7 +17,7 @@ def create_enemies(room_data):
     with open("data/enemies.json", "r") as file:
         enemy_data = json.load(file)
 
-    enemies_to_create = room_data["enemies"]
+    enemies_to_create = room_data.get("enemies", [])
 
     for enemy in enemies_to_create:
         enemy_type = enemy["type"]
@@ -46,9 +48,22 @@ def create_walls(room_data):
     return walls
 
 def create_doors(room_data, interactables):
-    door_data = room_data["doors"]
+    door_data = room_data.get("doors", [])
     for door in door_data:
         interactables.append(Door(door["x"], door["y"], door["width"], door["height"], door["connected_room"], door["x_spawn"], door["y_spawn"]))
+
+
+def create_chests(room_data, interactables):
+    chest_data = room_data.get("chests", [])
+    with open("data/items.json", "r") as file:
+        item_data = json.load(file)
+    for chest in chest_data:
+        items = []
+        for item in chest["items"]:
+            data = item_data[item]
+            items.append(Item(data["name"], data["description"], data["icon"]))
+        interactables.append(Chest(chest["x"], chest["y"], chest["width"], chest["height"], items, chest["requires_key"]))
+
 
 def load_room(room):
     with open(f"data/rooms/{room}.json", "r") as file:
@@ -61,7 +76,7 @@ def load_room(room):
 def interactable_list(room_data):
     interactables = []
     create_doors(room_data, interactables)
-    # need moree interactables
+    create_chests(room_data, interactables)
     return interactables
 
 def load_walls(room):

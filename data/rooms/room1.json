@@ -126,5 +126,19 @@
             "y_spawn": 500
             
         }
+    ],
+    "chests": [
+        {
+            "x": 400,
+            "y": 400,
+            "width": 40,
+            "height": 40,
+            "requires_key": false,
+            "items": [
+                "dungeon_key",
+                "health_potion"
+            ]
+        }
     ]
+
 }

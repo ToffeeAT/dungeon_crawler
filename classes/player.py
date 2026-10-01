@@ -1,4 +1,5 @@
 from classes.wall import Wall
+from classes.chest import Chest
 import math
 from classes.door import Door
 from typing import TYPE_CHECKING
@@ -16,6 +17,8 @@ class Player:
         self.speed = speed
         self.attack = attack
         self.attack_range = attack_range
+        self.inventory = []
+        self.max_inventory_space = 5
 
     def move_up(self, walls: list[Wall], doors: list[Door]):
         if self.y_position - self.speed >= 0:
@@ -114,8 +117,18 @@ class Player:
         if self.interactable_in_range(interactable):
             if isinstance(interactable, Door):
                 return interactable.connected_room, interactable.x_spawn, interactable.y_spawn
+            if isinstance(interactable, Chest):
+                return interactable.items, interactable.requires_key
 
     def is_player_alive(self):
         return self.health > 0
+
+    def is_inventory_full(self):
+        return len(self.inventory) >= self.max_inventory_space
+
+    def add_item_to_inventory(self, item):
+        if not self.is_inventory_full():
+            self.inventory.append(item)
+
        
     

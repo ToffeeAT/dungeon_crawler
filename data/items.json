@@ -1,0 +1,13 @@
+{
+    "dungeon_key": {
+        "name": "Dungeon Key",
+        "description": "Can unlock a locked chest.",
+        "icon": "Asset_Pack/2D Pixel Dungeon Asset Pack/items and trap_animation/keys/keys_1_1.png"
+    },
+
+    "health_potion": {
+        "name": "Health Potion",
+        "description": "Restores health to the player.",
+        "icon": "Asset_Pack/2D Pixel Dungeon Asset Pack/items and trap_animation/flasks/flasks_1_1.png"
+    }
+}
