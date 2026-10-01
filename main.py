@@ -2,6 +2,7 @@ import pygame
 import levelload
 import game_states.playingstate as playingstate
 import game_states.gameoverstate as gameoverstate
+import game_states.cheststate as cheststate
 
 pygame.init()
 
@@ -42,6 +43,8 @@ while running:
         playingstate.draw(screen, player, walls, enemies, interactables)
     elif current_state == "GAME_OVER":
         gameoverstate.draw(screen)
+    elif current_state == "CHEST":
+        cheststate.draw(screen)
 
 
     pygame.display.flip()
