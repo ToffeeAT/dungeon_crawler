@@ -2,7 +2,7 @@ import pygame
 from classes.chest import Chest
 
 
-inventory_sheet = pygame.image.load("ui_art/PNG/Inventory.png")
+inventory_sheet = pygame.image.load("assets/ui_art/PNG/Inventory.png")
 chest_panel = inventory_sheet.subsurface((112, 1, 103, 99))
 chest_panel = pygame.transform.scale_by(chest_panel, 3)
 
