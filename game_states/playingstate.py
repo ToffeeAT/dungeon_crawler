@@ -6,6 +6,7 @@ import levelload
 import statelevelload
 
 def handle_interactions(player: Player, saved_rooms: dict, event, current_room, walls, enemies, interactables):
+    active_chest = None
     if player.is_player_alive():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
@@ -34,19 +35,18 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 walls = levelload.load_walls(new_room)
                             player.x_position = x_spawn
                             player.y_position = y_spawn #Door Logic
-                    elif isinstance(interactable, Chest):
+                    elif isinstance(interactable, Chest): # Chest Logic
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
                             items, requires_key = res
                             if not requires_key:
-                                interactable.open_chest()
-                                print(items)
+                                active_chest = interactable
 
 
 
 
 
-    return current_room, walls, enemies, interactables
+    return current_room, walls, enemies, interactables, active_chest
 
 
 def handle_movement(player: Player, walls, interactables):

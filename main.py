@@ -15,6 +15,8 @@ def start_game():
     return saved_rooms, current_room, player, walls, enemies, interactables, current_state
 
 saved_rooms, current_room, player, walls, enemies, interactables, current_state = start_game()
+active_chest = None
+selected_chest_slot = 0
 
 screen = pygame.display.set_mode((800,600))
 
@@ -29,12 +31,17 @@ while running:
             running = False
 
         if current_state == "PLAYING":
-            current_room, walls, enemies, interactables = playingstate.handle_interactions(player, saved_rooms, event, current_room, walls, enemies, interactables)
+            current_room, walls, enemies, interactables, active_chest = playingstate.handle_interactions(player, saved_rooms, event, current_room, walls, enemies, interactables)
+            if active_chest is not None:
+                current_state = "CHEST"
 
         if current_state == "GAME_OVER":
             res = gameoverstate.handle_interactions(event)
             if res == "RESTART":
                 saved_rooms, current_room, player, walls, enemies, interactables, current_state = start_game()
+
+        if current_state == "CHEST":
+            selected_chest_slot = cheststate.slot_selection( selected_chest_slot, event)
 
     if current_state == "PLAYING":
         current_state = playingstate.check_current_state(player, current_state)
@@ -44,7 +51,7 @@ while running:
     elif current_state == "GAME_OVER":
         gameoverstate.draw(screen)
     elif current_state == "CHEST":
-        cheststate.draw(screen)
+        cheststate.draw(screen, active_chest, selected_chest_slot)
 
 
     pygame.display.flip()

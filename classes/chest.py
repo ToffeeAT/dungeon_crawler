@@ -7,7 +7,3 @@ class Chest:
         self.height = height
         self.items = items
         self.requires_key = requires_key
-
-    def open_chest(self):
-        print(self.items)
-        self.is_open = True
