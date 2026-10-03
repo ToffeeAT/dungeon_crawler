@@ -15,6 +15,8 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
             elif event.key == pygame.K_e:
                 for interactable in interactables:
                     if isinstance(interactable, Door): #Door logic
+                        # print("Door found")
+                        # print("In range:", player.interactable_in_range(interactable))
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
                             new_room, x_spawn, y_spawn = res
@@ -25,6 +27,8 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 interactables
                             )
                             current_room = new_room
+                            # print("Entered:", current_room)
+                            # print("Spawn:", x_spawn, y_spawn)
                             if new_room not in saved_rooms:
                                 walls, enemies, interactables = levelload.load_room(new_room)
                             else:
@@ -34,7 +38,8 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 )
                                 walls = levelload.load_walls(new_room)
                             player.x_position = x_spawn
-                            player.y_position = y_spawn #Door Logic
+                            player.y_position = y_spawn
+                            return current_room, walls, enemies, interactables, active_chest #Door Logic
                     elif isinstance(interactable, Chest): # Chest Logic
                         res = player.interact_with_interactable(interactable)
                         if res is not None:

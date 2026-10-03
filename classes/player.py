@@ -18,10 +18,11 @@ class Player:
         self.speed = speed
         self.attack = attack
         self.attack_range = attack_range
+        self.interact_range = 100
         self.inventory = []
         self.max_inventory_space = 5
         self.width = 35
-        self.height = 50
+        self.height = 40
         self.idle_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Idle 32x32.png")
         self.walk_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Walk 32x32.png")
         self.animation_speed = 150
@@ -148,7 +149,7 @@ class Player:
         return math.sqrt(a + b)
 
     def interactable_in_range(self, obstacle):
-        return self.distance_from_interactable(obstacle) < self.attack_range
+        return self.distance_from_interactable(obstacle) < self.interact_range
 
     def interact_with_interactable(self, interactable):
         if self.interactable_in_range(interactable):
