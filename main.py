@@ -46,6 +46,10 @@ while running:
     if current_state == "PLAYING":
         current_state = playingstate.check_current_state(player, current_state)
         playingstate.handle_movement(player, walls, interactables)
+        if player.is_moving == True:
+            player.update_walk_animation(current_time)
+        else:
+            player.update_idle_animation(current_time)
         playingstate.set_enemy_ai(player, enemies, walls, current_time)
         playingstate.draw(screen, player, walls, enemies, interactables)
     elif current_state == "GAME_OVER":

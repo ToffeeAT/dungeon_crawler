@@ -50,16 +50,22 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
 
 
 def handle_movement(player: Player, walls, interactables):
+    player.is_moving = False
     keys = pygame.key.get_pressed()
     if player.is_player_alive():
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             player.move_up(walls, interactables)
+            player.is_moving = True
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             player.move_down(walls, interactables)
+            player.is_moving = True
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             player.move_right(walls, interactables)
+            player.is_moving = True
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             player.move_left(walls, interactables)
+            player.is_moving = True
+
 
 
 def draw(screen, player, walls, enemies, interactables):
@@ -76,10 +82,32 @@ def draw(screen, player, walls, enemies, interactables):
 
 
     if player.is_player_alive():
-        screen.blit(player.idle_image, (player.x_position, player.y_position))
-        pygame.draw.rect(screen, (100,0,0), (player.x_position, player.y_position -10, 50, 6))
+        #draw the character
+        if player.is_moving == True:
+            if player.last_direction_faced == "FRONT":
+                screen.blit(player.walk_front_frames[player.walk_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "BACK":
+                screen.blit(player.walk_back_frames[player.walk_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "LEFT":
+                screen.blit(player.walk_left_frames[player.walk_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "RIGHT":
+                screen.blit(player.walk_right_frames[player.walk_frame_index], (player.x_position, player.y_position))
+
+        else:
+            if player.last_direction_faced == "FRONT":
+                screen.blit(player.idle_front_frames[player.idle_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "BACK":
+                screen.blit(player.idle_back_frames[player.idle_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "LEFT":
+                screen.blit(player.idle_left_frames[player.idle_frame_index], (player.x_position, player.y_position))
+            elif player.last_direction_faced == "RIGHT":
+                screen.blit(player.idle_right_frames[player.idle_frame_index], (player.x_position, player.y_position))
+        #code to see player hitbox comment out when not in use
+        # pygame.draw.rect(screen, (255,0,255), (player.x_position + 30, player.y_position + 40, player.width, player.height), 2)
+        # draw the health UI 
+        pygame.draw.rect(screen, (100,0,0), (player.x_position + 23, player.y_position + 15, 50, 6))
         player_health_width = int(50 * player.health_percentage())
-        pygame.draw.rect(screen, (0,255,0), (player.x_position, player.y_position -10, player_health_width, 6))
+        pygame.draw.rect(screen, (0,255,0), (player.x_position + 23, player.y_position + 15, player_health_width, 6))
 
     for enemy in enemies:
         if enemy.is_alive():

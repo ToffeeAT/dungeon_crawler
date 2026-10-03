@@ -20,14 +20,38 @@ class Player:
         self.attack_range = attack_range
         self.inventory = []
         self.max_inventory_space = 5
-        self.width = 50
+        self.width = 35
         self.height = 50
         self.idle_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Idle 32x32.png")
-        self.idle_image = self.idle_sheet.subsurface((0, 0, 32, 32))
-        self.idle_image = pygame.transform.scale_by(self.idle_image, 3)
+        self.walk_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Walk 32x32.png")
+        self.animation_speed = 150
+        self.last_direction_faced = "FRONT"
+        #idle_animation_attributes
+        self.idle_front_frames = []
+        self.idle_back_frames = []
+        self.idle_left_frames = []
+        self.idle_right_frames = []
+        self.init_frames_front("idle")
+        self.init_frames_right("idle")
+        self.init_frames_back("idle")
+        self.init_frames_left("idle")
+        self.idle_frame_index = 0
+        self.last_idle_update = 0
+        #walk_animation_attributes
+        self.walk_front_frames = []
+        self.walk_right_frames = []
+        self.walk_back_frames = []
+        self.walk_left_frames = []
+        self.init_frames_front("walk")
+        self.init_frames_right("walk")
+        self.init_frames_back("walk")
+        self.init_frames_left("walk")
+        self.walk_frame_index = 0
+        self.last_walk_update = 0
+        self.is_moving = False
+
         
-
-
+        
 
     def move_up(self, walls: list[Wall], doors: list[Door]):
         if self.y_position - self.speed >= 0:
@@ -40,6 +64,7 @@ class Player:
                 if self.collidesWith(door):
                     self.y_position = self.y_position + self.speed
                     break
+            self.last_direction_faced = "BACK"
 
     def move_down(self, walls: list[Wall], doors: list[Door]):
         if self.y_position + self.speed <= 550:
@@ -52,6 +77,7 @@ class Player:
                 if self.collidesWith(door):
                     self.y_position = self.y_position - self.speed
                     break
+            self.last_direction_faced = "FRONT"
 
 
     def move_left(self, walls: list[Wall], doors: list[Door]):
@@ -65,6 +91,7 @@ class Player:
                 if self.collidesWith(door):
                     self.x_position = self.x_position + self.speed
                     break
+            self.last_direction_faced = "LEFT"
 
     def move_right(self, walls: list[Wall], doors: list[Door]):
         if self.x_position + self.speed <= 750:
@@ -77,12 +104,13 @@ class Player:
                 if self.collidesWith(door):
                     self.x_position = self.x_position - self.speed
                     break
+            self.last_direction_faced = "RIGHT"
 
     def collidesWith(self, obstacle):
-        player_left = self.x_position
-        player_right = self.x_position + self.width
-        player_top = self.y_position
-        player_bottom = self.y_position + self.height
+        player_left = self.x_position + 30
+        player_right = player_left + self.width
+        player_top = self.y_position + 40
+        player_bottom = player_top + self.height
 
         obstacle_left = obstacle.x_pos
         obstacle_right = obstacle.x_pos + obstacle.width
@@ -138,6 +166,75 @@ class Player:
     def add_item_to_inventory(self, item):
         if not self.is_inventory_full():
             self.inventory.append(item)
+
+    def init_frames_front(self, sheet):
+        if sheet == "idle":
+            sheet = self.idle_sheet
+            li = self.idle_front_frames
+        elif sheet == "walk":
+            sheet = self.walk_sheet
+            li = self.walk_front_frames
+        for i in range(8):
+            frame = sheet.subsurface((i * 32, 0, 32, 32))
+            frame = pygame.transform.scale_by(frame, 3)
+            li.append(frame)
+
+    def init_frames_right(self, sheet):
+        if sheet == "idle":
+            sheet = self.idle_sheet
+            li = self.idle_right_frames
+        elif sheet == "walk":
+            sheet = self.walk_sheet
+            li = self.walk_right_frames
+        for i in range(8):
+            frame = sheet.subsurface((i * 32, 32, 32, 32))
+            frame = pygame.transform.scale_by(frame, 3)
+            li.append(frame)
+
+    def init_frames_back(self, sheet):
+        if sheet == "idle":
+            sheet = self.idle_sheet
+            li = self.idle_back_frames
+        elif sheet == "walk":
+            sheet = self.walk_sheet
+            li = self.walk_back_frames
+        for i in range(8):
+            frame = sheet.subsurface((i * 32, 64, 32, 32))
+            frame = pygame.transform.scale_by(frame, 3)
+            li.append(frame)
+
+    def init_frames_left(self, sheet):
+        if sheet == "idle":
+            sheet = self.idle_sheet
+            li = self.idle_left_frames
+        elif sheet == "walk":
+            sheet = self.walk_sheet
+            li = self.walk_left_frames
+
+        for i in range(8):
+            frame = sheet.subsurface((i * 32, 96, 32, 32))
+            frame = pygame.transform.scale_by(frame, 3)
+            li.append(frame)
+    
+    def update_idle_animation(self, current_time):
+        if (current_time - self.last_idle_update) >= self.animation_speed:
+            if self.idle_frame_index < 7:
+                self.idle_frame_index += 1
+            else:
+                self.idle_frame_index = 0
+            self.last_idle_update = current_time
+
+    def update_walk_animation(self, current_time):
+        if (current_time - self.last_walk_update) >= self.animation_speed:
+            if self.walk_frame_index < 7:
+                self.walk_frame_index += 1
+            else:
+                self.walk_frame_index = 0
+            self.last_walk_update = current_time
+
+    
+
+
 
        
     
