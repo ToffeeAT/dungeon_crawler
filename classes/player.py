@@ -20,7 +20,14 @@ class Player:
         self.attack_range = attack_range
         self.inventory = []
         self.max_inventory_space = 5
+        self.width = 50
+        self.height = 50
         self.idle_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Idle 32x32.png")
+        self.idle_image = self.idle_sheet.subsurface((0, 0, 32, 32))
+        self.idle_image = pygame.transform.scale_by(self.idle_image, 3)
+        
+
+
 
     def move_up(self, walls: list[Wall], doors: list[Door]):
         if self.y_position - self.speed >= 0:
@@ -73,9 +80,9 @@ class Player:
 
     def collidesWith(self, obstacle):
         player_left = self.x_position
-        player_right = self.x_position + 50
+        player_right = self.x_position + self.width
         player_top = self.y_position
-        player_bottom = self.y_position + 50
+        player_bottom = self.y_position + self.height
 
         obstacle_left = obstacle.x_pos
         obstacle_right = obstacle.x_pos + obstacle.width

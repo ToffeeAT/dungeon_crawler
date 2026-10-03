@@ -76,7 +76,7 @@ def draw(screen, player, walls, enemies, interactables):
 
 
     if player.is_player_alive():
-        pygame.draw.rect(screen, (255,0,0), (player.x_position, player.y_position, 50,50))
+        screen.blit(player.idle_image, (player.x_position, player.y_position))
         pygame.draw.rect(screen, (100,0,0), (player.x_position, player.y_position -10, 50, 6))
         player_health_width = int(50 * player.health_percentage())
         pygame.draw.rect(screen, (0,255,0), (player.x_position, player.y_position -10, player_health_width, 6))
