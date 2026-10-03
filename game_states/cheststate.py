@@ -39,16 +39,16 @@ def draw(screen, chest: Chest, selected_chest_slot):
 
 def slot_selection(selected_chest_slot, event):
     if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_RIGHT:
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
             if selected_chest_slot < 19:
                 selected_chest_slot += 1
-        elif event.key == pygame.K_LEFT:
+        elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
             if selected_chest_slot > 0:
                 selected_chest_slot -= 1
-        elif event.key == pygame.K_DOWN:
+        elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
             if selected_chest_slot <= 14:
                 selected_chest_slot += 5
-        elif event.key == pygame.K_UP:
+        elif event.key == pygame.K_UP or event.key == pygame.K_w:
             if selected_chest_slot >= 5:
                 selected_chest_slot -= 5
 

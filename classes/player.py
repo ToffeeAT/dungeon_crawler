@@ -3,6 +3,7 @@ from classes.chest import Chest
 import math
 from classes.door import Door
 from typing import TYPE_CHECKING
+import pygame
 
 if TYPE_CHECKING:
     from classes.enemy import Enemy
@@ -19,6 +20,7 @@ class Player:
         self.attack_range = attack_range
         self.inventory = []
         self.max_inventory_space = 5
+        self.idle_sheet = pygame.image.load("assets/dungeonArt/DG Asha Character/Blue Asha Idle 32x32.png")
 
     def move_up(self, walls: list[Wall], doors: list[Door]):
         if self.y_position - self.speed >= 0:
