@@ -47,6 +47,20 @@ def create_walls(room_data):
         walls.append(Wall(wall["x"], wall["y"], wall["width"], wall["height"]))
     return walls
 
+def create_outerwalls(room_data):
+    outer_walls = []
+    room_type = room_data["room_layout"]
+    with open(f"data/room_layouts/{room_type}.json", "r") as file:
+        outer_wall_data = json.load(file)
+    for wall in outer_wall_data["walls"]:
+        outer_walls.append(Wall(wall["x"], wall["y"], wall["width"], wall["height"]))
+    return outer_walls
+
+
+
+
+
+
 def create_doors(room_data, interactables):
     door_data = room_data.get("doors", [])
     for door in door_data:
@@ -69,9 +83,10 @@ def load_room(room):
     with open(f"data/rooms/{room}.json", "r") as file:
         room_data = json.load(file)
     walls = create_walls(room_data)
+    outer_walls = create_outerwalls(room_data)
     enemies = create_enemies(room_data)
     interactables = interactable_list(room_data)
-    return walls, enemies, interactables
+    return walls, outer_walls, enemies, interactables
 
 def interactable_list(room_data):
     interactables = []
@@ -84,3 +99,10 @@ def load_walls(room):
         room_data = json.load(file)
 
     return create_walls(room_data)
+
+def load_outer_walls(room):
+    with open(f"data/rooms/{room}.json", "r") as file:
+        room_data = json.load(file)
+
+    return create_outerwalls(room_data)
+

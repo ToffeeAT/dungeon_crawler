@@ -95,9 +95,9 @@
 
     "doors": [
         {
-            "x": 360,
+            "x": 330,
             "y": 560,
-            "width": 80,
+            "width": 128,
             "height": 40,
             "connected_room": "room1",
             "x_spawn": 375,

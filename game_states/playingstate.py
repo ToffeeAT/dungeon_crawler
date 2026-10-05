@@ -4,8 +4,9 @@ from classes.chest import Chest
 import pygame
 import levelload
 import statelevelload
+import environmentart
 
-def handle_interactions(player: Player, saved_rooms: dict, event, current_room, walls, enemies, interactables):
+def handle_interactions(player: Player, saved_rooms: dict, event, current_room, walls, outer_walls, enemies, interactables):
     active_chest = None
     if player.is_player_alive():
         if event.type == pygame.KEYDOWN:
@@ -30,13 +31,14 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                             # print("Entered:", current_room)
                             # print("Spawn:", x_spawn, y_spawn)
                             if new_room not in saved_rooms:
-                                walls, enemies, interactables = levelload.load_room(new_room)
+                                walls, outer_walls, enemies, interactables = levelload.load_room(new_room)
                             else:
                                 enemies, interactables = statelevelload.load_saved_room(
                                     new_room,
                                     saved_rooms
                                 )
                                 walls = levelload.load_walls(new_room)
+                                outer_walls = levelload.load_outer_walls(new_room)
                             player.x_position = x_spawn
                             player.y_position = y_spawn
                             return current_room, walls, enemies, interactables, active_chest #Door Logic
@@ -51,7 +53,7 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
 
 
 
-    return current_room, walls, enemies, interactables, active_chest
+    return current_room, walls, outer_walls, enemies, interactables, active_chest
 
 
 def handle_movement(player: Player, walls, interactables):
@@ -73,11 +75,13 @@ def handle_movement(player: Player, walls, interactables):
 
 
 
-def draw(screen, player, walls, enemies, interactables):
-    screen.fill((0,0,0))
+def draw(screen, player, walls, outer_walls, enemies, interactables):
+    screen.fill((105, 120, 150))
 
     for wall in walls:
         pygame.draw.rect(screen, (255,255,255), (wall.x_pos, wall.y_pos, wall.width, wall.height))
+        
+    environmentart.draw_outer_walls(screen, outer_walls)
 
     for interactable in interactables:
         if isinstance(interactable, Door):
