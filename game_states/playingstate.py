@@ -41,7 +41,7 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 outer_walls = levelload.load_outer_walls(new_room)
                             player.x_position = x_spawn
                             player.y_position = y_spawn
-                            return current_room, walls, enemies, interactables, active_chest #Door Logic
+                            return current_room, walls, outer_walls, enemies, interactables, active_chest #Door Logic
                     elif isinstance(interactable, Chest): # Chest Logic
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
@@ -80,7 +80,7 @@ def draw(screen, player, walls, outer_walls, enemies, interactables):
 
     for wall in walls:
         pygame.draw.rect(screen, (255,255,255), (wall.x_pos, wall.y_pos, wall.width, wall.height))
-        
+
     environmentart.draw_outer_walls(screen, outer_walls)
 
     for interactable in interactables:
