@@ -1,4 +1,5 @@
 import pygame
+from functools import lru_cache
 
 def outer_wall_pieces():
     wall_sheet = pygame.image.load(
@@ -68,4 +69,26 @@ def draw_outer_walls(screen, outer_walls):
     screen.blit(top_right_corner, (752, 0))
     screen.blit(bottom_left_corner, (0, 552))
     screen.blit(bottom_right_corner, (752, 552))
+
+@lru_cache(maxsize=1)
+def structure_pieces():
+    structure_sheet = pygame.image.load(
+        "assets/dungeonArt/Set 4.04.png"
+    ).convert_alpha()
+
+    basic_pillar = structure_sheet.subsurface((80, 16, 16, 48))
+    basic_pillar = pygame.transform.scale_by(basic_pillar, 3)
+
+    return {
+        "basic_pillar": basic_pillar
+    }
+
+def draw_structure(screen, structure, structure_sprites):
+    if structure.structure_type in structure_sprites:
+        sprite = structure_sprites[structure.structure_type]
+        screen.blit(sprite, (structure.x_pos, structure.y_pos))
+
+def get_structure_depth(structure):
+    return structure.y_pos + structure.collision_y_offset + structure.collision_height
+
 

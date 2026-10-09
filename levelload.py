@@ -114,3 +114,8 @@ def load_outer_walls(room):
 
     return create_outerwalls(room_data)
 
+def load_structures(room):
+    with open(f"data/rooms/{room}.json", "r") as file:
+        room_data = json.load(file)
+    return create_structures(room_data)
+

@@ -26,6 +26,16 @@
             "type": "basic_pillar",
             "x": 220,
             "y": 180
+        },
+        {
+            "type": "basic_pillar",
+            "x": 500,
+            "y": 180
+        },
+        {
+            "type": "basic_pillar",
+            "x": 220,
+            "y": 400
         }
     ],
 

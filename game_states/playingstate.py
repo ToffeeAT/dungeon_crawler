@@ -69,18 +69,7 @@ def handle_movement(player: Player, walls, interactables, structures):
             player.move_left(walls, interactables, structures)
             player.is_moving = True
 
-
-def draw(screen, player, walls, outer_walls, enemies, interactables, structures):
-    screen.fill((105, 120, 150))
-
-    environmentart.draw_outer_walls(screen, outer_walls)
-
-    for interactable in interactables:
-        if isinstance(interactable, Door):
-            pygame.draw.rect(screen, (255,255,0), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
-        elif isinstance(interactable, Chest):
-            pygame.draw.rect(screen, (139, 69, 19), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
-
+def draw_player(screen, player):
     if player.is_player_alive():
         #draw the character
         if player.is_moving == True:
@@ -103,26 +92,64 @@ def draw(screen, player, walls, outer_walls, enemies, interactables, structures)
             elif player.last_direction_faced == "RIGHT":
                 screen.blit(player.idle_right_frames[player.idle_frame_index], (player.x_position, player.y_position))
 
-        #code to see player hitbox comment out when not in use
-        # pygame.draw.rect(screen, (255,0,255), (player.x_position + 30, player.y_position + 40, player.width, player.height), 2)
 
-        #draw the health UI
+
+def draw(screen, player, walls, outer_walls, enemies, interactables, structures):
+    screen.fill((105, 120, 150))
+
+    environmentart.draw_outer_walls(screen, outer_walls)
+
+
+    for interactable in interactables:
+        if isinstance(interactable, Door):
+            pygame.draw.rect(screen, (255,255,0), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
+
+    structure_sprites = environmentart.structure_pieces()
+
+    #create a list of objects that need Y-sorting
+    draw_objects = []
+
+    for structure in structures:
+        depth = environmentart.get_structure_depth(structure)
+        draw_objects.append((depth, "structure", structure))
+
+    if player.is_player_alive():
+        player_depth = player.y_position + 40 + player.height
+        draw_objects.append((player_depth, "player", player))
+
+    for enemy in enemies:
+        if enemy.is_alive():
+            enemy_depth = enemy.y_pos + 50
+            draw_objects.append((enemy_depth, "enemy", enemy))
+
+    #sort objects from back to front
+    draw_objects.sort(key=lambda obj: obj[0])
+
+    for depth, object_type, obj in draw_objects:
+        if object_type == "structure":
+            environmentart.draw_structure(screen, obj, structure_sprites)
+        elif object_type == "player":
+            draw_player(screen, obj)
+        elif object_type == "enemy":
+            pygame.draw.rect(screen, (0,0,255), (obj.x_pos, obj.y_pos, 50,50))
+
+    #draw health UI
+    if player.is_player_alive():
         pygame.draw.rect(screen, (100,0,0), (player.x_position + 23, player.y_position + 15, 50, 6))
         player_health_width = int(50 * player.health_percentage())
         pygame.draw.rect(screen, (0,255,0), (player.x_position + 23, player.y_position + 15, player_health_width, 6))
 
     for enemy in enemies:
         if enemy.is_alive():
-            pygame.draw.rect(screen, (0,0,255), (enemy.x_pos, enemy.y_pos, 50,50))
             enemy_health_width = int(50 * enemy.health_percentage())
-            pygame.draw.rect(screen, (100,0,0), (enemy.x_pos, enemy.y_pos -10, 50, 6))
-            pygame.draw.rect(screen, (0,255,0), (enemy.x_pos, enemy.y_pos -10, enemy_health_width, 6))
+            pygame.draw.rect(screen, (100,0,0), (enemy.x_pos, enemy.y_pos - 10, 50, 6))
+            pygame.draw.rect(screen, (0,255,0), (enemy.x_pos, enemy.y_pos - 10, enemy_health_width, 6))
 
 
-def set_enemy_ai(player, enemies, walls, current_time):
+def set_enemy_ai(player, enemies, walls, current_time, structures, interactables):
     for enemy in enemies:
         if enemy.is_alive() and player.is_player_alive():
-            enemy.chase_player(player, walls)
+            enemy.chase_player(player, walls, interactables, structures)
             enemy.attack_player(player, current_time)
 
 

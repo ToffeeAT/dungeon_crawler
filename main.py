@@ -55,7 +55,7 @@ while running:
         else:
             player.update_idle_animation(current_time)
 
-        playingstate.set_enemy_ai(player, enemies, collision_walls, current_time)
+        playingstate.set_enemy_ai(player, enemies, collision_walls, current_time, interactables, structures)
         playingstate.draw(screen, player, walls, outer_walls, enemies, interactables, structures)
 
     elif current_state == "GAME_OVER":
