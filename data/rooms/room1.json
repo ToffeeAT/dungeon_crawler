@@ -21,6 +21,14 @@
 
     "walls": [],
 
+    "structures": [
+        {
+            "type": "basic_pillar",
+            "x": 220,
+            "y": 180
+        }
+    ],
+
     "doors": [
         {
             "x": 336,
@@ -30,9 +38,9 @@
             "connected_room": "room2",
             "x_spawn": 375,
             "y_spawn": 450
-            
         }
     ],
+
     "chests": [
         {
             "x": 400,
@@ -46,5 +54,4 @@
             ]
         }
     ]
-
 }

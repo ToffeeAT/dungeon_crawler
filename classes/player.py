@@ -1,5 +1,6 @@
 from classes.wall import Wall
 from classes.chest import Chest
+from classes.structure import Structure
 import math
 from classes.door import Door
 from typing import TYPE_CHECKING
@@ -54,55 +55,39 @@ class Player:
         
         
 
-    def move_up(self, walls: list[Wall], doors: list[Door]):
+    def move_up(self, walls: list[Wall], interactables, structures: list[Structure]):
         if self.y_position - self.speed >= 0:
             self.y_position = self.y_position - self.speed
-            for wall in walls:
-                if self.collidesWith(wall):
-                    self.y_position = self.y_position + self.speed
-                    break
-            for door in doors:
-                if self.collidesWith(door):
+            for s in structures + walls + interactables:
+                if self.collidesWith(s):
                     self.y_position = self.y_position + self.speed
                     break
             self.last_direction_faced = "BACK"
 
-    def move_down(self, walls: list[Wall], doors: list[Door]):
+    def move_down(self, walls: list[Wall], interactables, structures: list[Structure]):
         if self.y_position + self.speed <= 550:
             self.y_position = self.y_position + self.speed
-            for wall in walls:
-                if self.collidesWith(wall):
-                    self.y_position = self.y_position - self.speed
-                    break
-            for door in doors:
-                if self.collidesWith(door):
+            for s in structures + walls + interactables:
+                if self.collidesWith(s):
                     self.y_position = self.y_position - self.speed
                     break
             self.last_direction_faced = "FRONT"
 
 
-    def move_left(self, walls: list[Wall], doors: list[Door]):
+    def move_left(self, walls: list[Wall], interactables, structures: list[Structure]):
         if self.x_position - self.speed >= 0:
             self.x_position = self.x_position - self.speed
-            for wall in walls:
-                if self.collidesWith(wall):
-                    self.x_position = self.x_position + self.speed
-                    break
-            for door in doors:
-                if self.collidesWith(door):
+            for s in structures + walls + interactables:
+                if self.collidesWith(s):
                     self.x_position = self.x_position + self.speed
                     break
             self.last_direction_faced = "LEFT"
 
-    def move_right(self, walls: list[Wall], doors: list[Door]):
+    def move_right(self, walls: list[Wall], interactables, structures: list[Structure]):
         if self.x_position + self.speed <= 750:
             self.x_position = self.x_position + self.speed
-            for wall in walls:
-                if self.collidesWith(wall):
-                    self.x_position = self.x_position - self.speed
-                    break
-            for door in doors:
-                if self.collidesWith(door):
+            for s in structures + walls + interactables:
+                if self.collidesWith(s):
                     self.x_position = self.x_position - self.speed
                     break
             self.last_direction_faced = "RIGHT"
@@ -113,13 +98,24 @@ class Player:
         player_top = self.y_position + 40
         player_bottom = player_top + self.height
 
-        obstacle_left = obstacle.x_pos
-        obstacle_right = obstacle.x_pos + obstacle.width
-        obstacle_top = obstacle.y_pos
-        obstacle_bottom = obstacle.y_pos + obstacle.height
+        if isinstance(obstacle, Structure):
+            if not obstacle.collision_status:
+                return False
+
+            obstacle_left = obstacle.x_pos + obstacle.collision_x_offset
+            obstacle_right = obstacle_left + obstacle.collision_width
+            obstacle_top = obstacle.y_pos + obstacle.collision_y_offset
+            obstacle_bottom = obstacle_top + obstacle.collision_height
+
+        else:
+            obstacle_left = obstacle.x_pos
+            obstacle_right = obstacle.x_pos + obstacle.width
+            obstacle_top = obstacle.y_pos
+            obstacle_bottom = obstacle.y_pos + obstacle.height
 
         x_overlap = player_right > obstacle_left and player_left < obstacle_right
         y_overlap = player_top < obstacle_bottom and player_bottom > obstacle_top
+
         return x_overlap and y_overlap
 
     def distance_from_enemy(self, enemy: "Enemy"):

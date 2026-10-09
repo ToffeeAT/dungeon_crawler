@@ -6,7 +6,7 @@ import levelload
 import statelevelload
 import environmentart
 
-def handle_interactions(player: Player, saved_rooms: dict, event, current_room, walls, outer_walls, enemies, interactables):
+def handle_interactions(player: Player, saved_rooms: dict, event, current_room, walls, outer_walls, enemies, interactables, structures):
     active_chest = None
     if player.is_player_alive():
         if event.type == pygame.KEYDOWN:
@@ -16,8 +16,6 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
             elif event.key == pygame.K_e:
                 for interactable in interactables:
                     if isinstance(interactable, Door): #Door logic
-                        # print("Door found")
-                        # print("In range:", player.interactable_in_range(interactable))
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
                             new_room, x_spawn, y_spawn = res
@@ -28,10 +26,9 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 interactables
                             )
                             current_room = new_room
-                            # print("Entered:", current_room)
-                            # print("Spawn:", x_spawn, y_spawn)
+
                             if new_room not in saved_rooms:
-                                walls, outer_walls, enemies, interactables = levelload.load_room(new_room)
+                                walls, outer_walls, enemies, interactables, structures = levelload.load_room(new_room)
                             else:
                                 enemies, interactables = statelevelload.load_saved_room(
                                     new_room,
@@ -39,47 +36,42 @@ def handle_interactions(player: Player, saved_rooms: dict, event, current_room, 
                                 )
                                 walls = levelload.load_walls(new_room)
                                 outer_walls = levelload.load_outer_walls(new_room)
+                                structures = levelload.load_structures(new_room)
+
                             player.x_position = x_spawn
                             player.y_position = y_spawn
-                            return current_room, walls, outer_walls, enemies, interactables, active_chest #Door Logic
-                    elif isinstance(interactable, Chest): # Chest Logic
+                            return current_room, walls, outer_walls, enemies, interactables, active_chest, structures #Door Logic
+
+                    elif isinstance(interactable, Chest): #Chest Logic
                         res = player.interact_with_interactable(interactable)
                         if res is not None:
                             items, requires_key = res
                             if not requires_key:
                                 active_chest = interactable
 
+    return current_room, walls, outer_walls, enemies, interactables, active_chest, structures
 
 
-
-
-    return current_room, walls, outer_walls, enemies, interactables, active_chest
-
-
-def handle_movement(player: Player, walls, interactables):
+def handle_movement(player: Player, walls, interactables, structures):
     player.is_moving = False
     keys = pygame.key.get_pressed()
     if player.is_player_alive():
         if keys[pygame.K_w] or keys[pygame.K_UP]:
-            player.move_up(walls, interactables)
+            player.move_up(walls, interactables, structures)
             player.is_moving = True
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            player.move_down(walls, interactables)
+            player.move_down(walls, interactables, structures)
             player.is_moving = True
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            player.move_right(walls, interactables)
+            player.move_right(walls, interactables, structures)
             player.is_moving = True
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            player.move_left(walls, interactables)
+            player.move_left(walls, interactables, structures)
             player.is_moving = True
 
 
-
-def draw(screen, player, walls, outer_walls, enemies, interactables):
+def draw(screen, player, walls, outer_walls, enemies, interactables, structures):
     screen.fill((105, 120, 150))
-
-    for wall in walls:
-        pygame.draw.rect(screen, (255,255,255), (wall.x_pos, wall.y_pos, wall.width, wall.height))
 
     environmentart.draw_outer_walls(screen, outer_walls)
 
@@ -88,7 +80,6 @@ def draw(screen, player, walls, outer_walls, enemies, interactables):
             pygame.draw.rect(screen, (255,255,0), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
         elif isinstance(interactable, Chest):
             pygame.draw.rect(screen, (139, 69, 19), (interactable.x_pos, interactable.y_pos, interactable.width, interactable.height))
-
 
     if player.is_player_alive():
         #draw the character
@@ -111,9 +102,11 @@ def draw(screen, player, walls, outer_walls, enemies, interactables):
                 screen.blit(player.idle_left_frames[player.idle_frame_index], (player.x_position, player.y_position))
             elif player.last_direction_faced == "RIGHT":
                 screen.blit(player.idle_right_frames[player.idle_frame_index], (player.x_position, player.y_position))
+
         #code to see player hitbox comment out when not in use
         # pygame.draw.rect(screen, (255,0,255), (player.x_position + 30, player.y_position + 40, player.width, player.height), 2)
-        # draw the health UI 
+
+        #draw the health UI
         pygame.draw.rect(screen, (100,0,0), (player.x_position + 23, player.y_position + 15, 50, 6))
         player_health_width = int(50 * player.health_percentage())
         pygame.draw.rect(screen, (0,255,0), (player.x_position + 23, player.y_position + 15, player_health_width, 6))
@@ -131,6 +124,7 @@ def set_enemy_ai(player, enemies, walls, current_time):
         if enemy.is_alive() and player.is_player_alive():
             enemy.chase_player(player, walls)
             enemy.attack_player(player, current_time)
+
 
 def check_current_state(player: Player, current_state):
     if current_state == "PLAYING" and not player.is_player_alive():

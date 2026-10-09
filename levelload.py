@@ -4,6 +4,7 @@ from classes.wall import Wall
 from classes.door import Door
 from classes.chest import Chest
 from classes.item import Item
+from classes.structure import Structure
 import json
 
 
@@ -56,9 +57,15 @@ def create_outerwalls(room_data):
         outer_walls.append(Wall(wall["x"], wall["y"], wall["width"], wall["height"]))
     return outer_walls
 
-
-
-
+def create_structures(room_data):
+    structures = []
+    structure_data = room_data.get("structures", [])
+    for s in structure_data:
+        s_type = s["type"]
+        with open(f"data/structure_definitions/{s_type}.json") as file:
+            s_def = json.load(file)
+        structures.append(Structure(s['x'], s['y'], s_def['width'], s_def['height'], s['type'], s_def['collision_status'], s_def['collision_x_offset'], s_def['collision_y_offset'], s_def['collision_width'], s_def['collision_height']))
+    return structures
 
 
 def create_doors(room_data, interactables):
@@ -86,7 +93,8 @@ def load_room(room):
     outer_walls = create_outerwalls(room_data)
     enemies = create_enemies(room_data)
     interactables = interactable_list(room_data)
-    return walls, outer_walls, enemies, interactables
+    structures = create_structures(room_data)
+    return walls, outer_walls, enemies, interactables, structures
 
 def interactable_list(room_data):
     interactables = []

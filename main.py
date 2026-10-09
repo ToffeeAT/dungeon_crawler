@@ -10,11 +10,11 @@ def start_game():
     saved_rooms = {}
     current_room = "room1"
     player = levelload.create_player()
-    walls, outer_walls, enemies, interactables = levelload.load_room("room1")
+    walls, outer_walls, enemies, interactables, structures = levelload.load_room("room1")
     current_state = "PLAYING"
-    return saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state
+    return saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state, structures
 
-saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state = start_game()
+saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state, structures = start_game()
 active_chest = None
 selected_chest_slot = 0
 
@@ -31,14 +31,14 @@ while running:
             running = False
 
         if current_state == "PLAYING":
-            current_room, walls, outer_walls, enemies, interactables, active_chest = playingstate.handle_interactions(player, saved_rooms, event, current_room, walls, outer_walls, enemies, interactables)
+            current_room, walls, outer_walls, enemies, interactables, active_chest, structures = playingstate.handle_interactions(player, saved_rooms, event, current_room, walls, outer_walls, enemies, interactables, structures)
             if active_chest is not None:
                 current_state = "CHEST"
 
         if current_state == "GAME_OVER":
             res = gameoverstate.handle_interactions(event)
             if res == "RESTART":
-                saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state = start_game()
+                saved_rooms, current_room, player, walls, outer_walls, enemies, interactables, current_state, structures = start_game()
 
         if current_state == "CHEST":
             selected_chest_slot = cheststate.slot_selection(selected_chest_slot, event)
@@ -48,7 +48,7 @@ while running:
 
         collision_walls = walls + outer_walls
 
-        playingstate.handle_movement(player, collision_walls, interactables)
+        playingstate.handle_movement(player, collision_walls, interactables, structures)
 
         if player.is_moving == True:
             player.update_walk_animation(current_time)
@@ -56,7 +56,7 @@ while running:
             player.update_idle_animation(current_time)
 
         playingstate.set_enemy_ai(player, enemies, collision_walls, current_time)
-        playingstate.draw(screen, player, walls, outer_walls, enemies, interactables)
+        playingstate.draw(screen, player, walls, outer_walls, enemies, interactables, structures)
 
     elif current_state == "GAME_OVER":
         gameoverstate.draw(screen)
